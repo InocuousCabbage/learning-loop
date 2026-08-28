@@ -39,18 +39,19 @@ def db_url():
     url = os.environ.get("SUPABASE_DB_URL")
     if url:
         return url
-    root = os.environ.get("CTX_FRAMEWORK_ROOT", "/Users/chiveschamoy/cortextos-personal")
-    org = os.environ.get("CTX_ORG", "personal")
-    for path in (os.path.join(root, "orgs", org, "secrets.env"),
-                 "/Users/chiveschamoy/cortextos-personal/orgs/personal/secrets.env"):
+    # Optional fallback: resolve from an org secrets.env, but ONLY if CTX_FRAMEWORK_ROOT
+    # and CTX_ORG are both set. No hardcoded machine path.
+    root = os.environ.get("CTX_FRAMEWORK_ROOT")
+    org = os.environ.get("CTX_ORG")
+    if root and org:
         try:
-            for line in open(path, encoding="utf-8"):
+            for line in open(os.path.join(root, "orgs", org, "secrets.env"), encoding="utf-8"):
                 if line.startswith("SUPABASE_DB_URL="):
                     return line.split("=", 1)[1].strip()
         except FileNotFoundError:
-            continue
-    print("ERROR: SUPABASE_DB_URL not in env or secrets.env. The Skill Tracker "
-          "connection is not configured.", file=sys.stderr)
+            pass
+    print("ERROR: SUPABASE_DB_URL is not set. Set the SUPABASE_DB_URL environment variable "
+          "(or CTX_FRAMEWORK_ROOT + CTX_ORG pointing at a secrets.env).", file=sys.stderr)
     sys.exit(2)
 
 
