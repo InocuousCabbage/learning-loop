@@ -1,0 +1,17 @@
+# Secrets — never commit a connection string or key
+secrets.env
+.env
+*.key
+
+# Python
+__pycache__/
+*.pyc
+
+# Loop working output (generated per run, in the working dir — not source).
+# Anchored so it never matches the skills/learning-loop/ source directory.
+/learning-loop/
+/LESSONS.md
+/history.json
+
+# OS
+.DS_Store
